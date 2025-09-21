@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ITM University Registration Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffe6f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 30px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    h1 {
+      background-color: yellow;
+      padding: 15px;
+      border-radius: 5px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      padding: 5px;
+      border-radius: 5px;
+      color: #fff;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 90%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin: 10px 5px;
+      padding: 10px 20px;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .record {
+      background-color: #f2f2f2;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: left;
+    }
+
+    #recordContainer {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .green { background-color: green; }
+    .red { background-color: red; }
+    .purple { background-color: purple; }
+    .cyan { background-color: cyan; }
+    .blue { background-color: blue; }
+    .skyblue { background-color: skyblue; }
+    .blueviolet { background-color: blueviolet; }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>ITM UNIVERSITY GWALIOR REGISTRATION PAGE</h1>
+
+    <label class="green">Enter Your ID</label>
+    <input type="number" id="t1" />
+
+    <label class="cyan">Enter Your Name</label>
+    <input type="text" id="t2" />
+
+    <label class="blue">Enter Your Username</label>
+    <input type="text" id="t3" />
+
+    <label class="purple">Enter Your Age</label>
+    <input type="number" id="t4" />
+
+    <label class="skyblue">Enter Your Email</label>
+    <input type="text" id="t5" />
+
+    <label class="red">Enter Your Password</label>
+    <input type="number" id="t6" />
+
+    <label class="blueviolet">Confirm Your Password</label>
+    <input type="number" id="t7" />
+
+    <br><br>
+
+    <button class="red" onclick="addrecord()">Registration</button>
+    <button class="green" onclick="View()">View</button>
+    <button class="purple" onclick="Viewid()">View By ID</button>
+    <button class="cyan" onclick="Update()">Update</button>
+    <button class="blue" onclick="Delete()">Delete</button>
+
+    <div id="recordContainer"></div>
+  </div>
+
+  <script>
+    async function addrecord() {
+      try {
+        let id = document.getElementById("t1").value;
+        let FullName = document.getElementById("t2").value;
+        let Username = document.getElementById("t3").value;
+        let Age = document.getElementById("t4").value;
+        let EmailAddress = document.getElementById("t5").value;
+        let Password = document.getElementById("t6").value;
+        let ConfirmPassword = document.getElementById("t7").value;
+
+        let response = await fetch("http://localhost:2000/insert", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ _id: id, FullName, Username, Age, EmailAddress, Password, ConfirmPassword })
+        });
+
+        let result = await response.json();
+        alert("Data inserted successfully");
+      } catch (error) {
+        console.error(error);
+        alert("Error inserting data");
+      }
+    }
+
+    async function Update() {
+      try {
+        let id = document.getElementById("t1").value;
+        let FullName = document.getElementById("t2").value;
+        let Username = document.getElementById("t3").value;
+        let Age = document.getElementById("t4").value;
+        let EmailAddress = document.getElementById("t5").value;
+        let Password = document.getElementById("t6").value;
+        let ConfirmPassword = document.getElementById("t7").value;
+
+        let response = await fetch(`http://localhost:2000/myupdate/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ _id: id, FullName, Username, Age, EmailAddress, Password, ConfirmPassword })
+        });
+
+        let result = await response.json();
+        alert("Data updated successfully");
+      } catch (error) {
+        console.error(error);
+        alert("Error updating data");
+      }
+    }
+
+    async function Delete() {
+      try {
+        let id = document.getElementById("t1").value;
+
+        let response = await fetch(`http://localhost:2000/mydelete/${id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        let result = await response.json();
+        alert("Data deleted successfully");
+      } catch (error) {
+        console.error(error);
+        alert("Error deleting data");
+      }
+    }
+
+    async function View() {
+      try {
+        let look = await fetch("http://localhost:2000/Show");
+        const data = await look.json();
+
+        document.getElementById("recordContainer").innerHTML = data.map(s => `
+          <div class="record">
+            <strong>ID:</strong> ${s._id}<br>
+            <strong>Full Name:</strong> ${s.FullName}<br>
+            <strong>Username:</strong> ${s.Username}<br>
+            <strong>Age:</strong> ${s.Age}<br>
+            <strong>Email:</strong> ${s.EmailAddress}<br>
+            <strong>Password:</strong> ${s.Password}<br>
+            <strong>Confirm Password:</strong> ${s.ConfirmPassword}<br>
+          </div>
+        `).join('');
+        alert("Data viewed successfully");
+      } catch (error) {
+        console.error(error);
+        alert("Error viewing data");
+      }
+    }
+
+    async function Viewid() {
+      try {
+        let id = document.getElementById("t1").value;
+
+        let response = await fetch(`http://localhost:2000/view/${id}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        let result = await response.json();
+
+        document.getElementById("t2").value = result.FullName;
+        document.getElementById("t3").value = result.Username;
+        document.getElementById("t4").value = result.Age;
+        document.getElementById("t5").value = result.EmailAddress;
+        document.getElementById("t6").value = result.Password;
+        document.getElementById("t7").value = result.ConfirmPassword;
+
+        alert("Data retrieved by ID successfully");
+      } catch (error) {
+        console.error(error);
+        alert("Error viewing data by ID");
+      }
+    }
+  </script>
+</body>
+</html>
+ 
